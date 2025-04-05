@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        input, button { padding: 10px; margin: 5px; }
+        #weather { margin-top: 20px; font-size: 20px; }
+    </style>
+</head>
+<body>
+
+    <h2>Simple Weather App</h2>
+    <input type="text" id="city" placeholder="Enter city name">
+    <button onclick="getWeather()">Get Weather</button>
+
+    <div id="weather"></div>
+
+    <script>
+        function getWeather() {
+            let city = document.getElementById("city").value.trim();
+            let weatherDiv = document.getElementById("weather");
+
+            if (!city) {
+                alert("Please enter a city name");
+                return;
+            }
+
+            // Show loading message
+            weatherDiv.innerHTML = "Fetching weather...";
+
+            fetch(`http://localhost:8081/weather?city=${city}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        weatherDiv.innerHTML = "Error: " + data.error;
+                    } else {
+                        weatherDiv.innerHTML = `
+                            <p><strong>Weather in ${data.city}</strong></p>
+                            <p>Temperature: ${data.temp}°C</p>
+                            <p>Condition: ${data.condition}</p>
+                        `;
+                    }
+                })
+                .catch(err => {
+                    console.log("Error fetching data:", err);
+                    weatherDiv.innerHTML = "Failed to fetch weather data.";
+                });
+        }
+    </script>
+
+</body>
+</html>
